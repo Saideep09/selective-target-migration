@@ -77,6 +77,19 @@ jobs:
           echo "Source Repository: ${{ steps.issue_body.outputs.source_repo }}"
           echo "Target Organization: ${{ steps.issue_body.outputs.target_org }}"
           echo "Target Repository: ${{ steps.issue_body.outputs.target_repo }}"
+          
+      - name: Set Target Org Token
+        id: set_target_token
+        run: |
+          if [[ "${{ steps.issue_body.outputs.target_org }}" == "saideep11111" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAIDEEP11111 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "saideep11112" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAIDEEP11112 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "sam-org2" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAM_ORG2 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "sam-org1" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAM_ORG1 }}" >> $GITHUB_ENV
+          fi
 
       - name: Export Dependabot Secrets
         run: |
