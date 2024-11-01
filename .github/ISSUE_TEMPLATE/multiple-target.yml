@@ -28,10 +28,10 @@ body:
       label: "Target Organization"
       description: "Select the target organization from the list"
       options:
+        - "saideep11111"
+        - "saideep11112"
         - "sam-org2"
-        - "target-org1"
-        - "target-org2"
-        - "target-org3"
+        - "sam-org1"
 
   - type: input
     id: target_repo
