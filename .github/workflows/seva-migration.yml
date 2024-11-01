@@ -95,37 +95,37 @@ jobs:
         run: |
             gh seva secrets export -a dependabot ${{ steps.issue_body.outputs.source_org }} --output-file org-dependabot-secrets.csv --token ${{ secrets.SOURCE_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_TOKEN }}
 
       - name: Create Dependabot Secrets
         run: |
-          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file org-dependabot-secrets.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file org-dependabot-secrets.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
           
       - name: Export action Secrets
         run: |
             gh seva secrets export -a actions ${{ steps.issue_body.outputs.source_org }} --output-file org-action-secrets.csv --token ${{ secrets.SOURCE_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_TOKEN }}
 
       - name: Create action Secrets
         run: |
-          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file org-action-secrets.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file org-action-secrets.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
           
       - name: Export action variables
         run: |
             gh seva variables export ${{ steps.issue_body.outputs.source_org }} --output-file org-action-variables.csv --token ${{ secrets.SOURCE_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_TOKEN }}
 
       - name: Create action variables
         run: |
-          gh seva variables create ${{ steps.issue_body.outputs.target_org }} --from-file org-action-variables.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva variables create ${{ steps.issue_body.outputs.target_org }} --from-file org-action-variables.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
   
   #Job for repo-level migration
   repo_level_migration:
@@ -169,6 +169,19 @@ jobs:
             core.setOutput("source_repo", sourceRepo);
             core.setOutput("target_org", targetOrg);
             core.setOutput("target_repo", targetRepo);
+
+      - name: Set Target Org Token
+        id: set_target_token
+        run: |
+          if [[ "${{ steps.issue_body.outputs.target_org }}" == "saideep11111" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAIDEEP11111 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "saideep11112" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAIDEEP11112 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "sam-org2" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAM_ORG2 }}" >> $GITHUB_ENV
+          elif [[ "${{ steps.issue_body.outputs.target_org }}" == "sam-org1" ]]; then
+            echo "TARGET_TOKEN=${{ secrets.TARGET_TOKEN_SAM_ORG1 }}" >> $GITHUB_ENV
+          fi
             
       - name: Lock Source Repository
         env:
@@ -189,33 +202,33 @@ jobs:
 
       - name: Create Dependabot Secrets (Repo-Level)
         run: |
-          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file repo-dependabot-secrets.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file repo-dependabot-secrets.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
 
       - name: Export action Secrets (Repo-level)
         run: |
           gh seva secrets export -a actions ${{ steps.issue_body.outputs.source_org }} ${{ steps.issue_body.outputs.source_repo }} --output-file repo-action-secrets.csv --token ${{ secrets.SOURCE_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_TOKEN }}
 
       - name: Create action Secrets (Repo-level)
         run: |
-          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file repo-action-secrets.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva secrets create ${{ steps.issue_body.outputs.target_org }} --from-file repo-action-secrets.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
           
       - name: Export action variables (Repo-level)
         run: |
           gh seva variables export ${{ steps.issue_body.outputs.source_org }} ${{ steps.issue_body.outputs.source_repo }} --output-file repo-action-variables.csv --token ${{ secrets.SOURCE_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_TOKEN }}
 
       - name: Create action variables (Repo-level)
         run: |
-          gh seva variables create ${{ steps.issue_body.outputs.target_org }} --from-file repo-action-variables.csv --token ${{ secrets.TARGET_TOKEN }}
+          gh seva variables create ${{ steps.issue_body.outputs.target_org }} --from-file repo-action-variables.csv --token ${{ env.TARGET_TOKEN }}
         env:
-          GH_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          GH_TOKEN: ${{ env.TARGET_TOKEN }}
           
       - name: Unlock Source Repository
         env:
